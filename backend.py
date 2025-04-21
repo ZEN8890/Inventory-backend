@@ -100,5 +100,9 @@ def delete_item(item_id):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+@app.route('/')
+def index():
+    return "Inventory Backend is running 🚀"
+
 if __name__ == '__main__':
     app.run(debug=True)

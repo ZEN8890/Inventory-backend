@@ -1,14 +1,25 @@
 from flask import Flask, request, jsonify
-import psycopg2
+import mysql.connector
 import os
+from urllib.parse import urlparse
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = Flask(__name__)
 
-# Ambil URL database dari environment variable
-DATABASE_URL = os.environ.get("DATABASE_URL")
+# Ambil DATABASE_URL dari .env
+db_url = os.getenv("DATABASE_URL")
+parsed_url = urlparse(db_url)
 
 def get_db_connection():
-    return psycopg2.connect(DATABASE_URL)
+    return mysql.connector.connect(
+        host=parsed_url.hostname,
+        user=parsed_url.username,
+        password=parsed_url.password,
+        database=parsed_url.path[1:],  # remove leading slash
+        port=parsed_url.port
+    )
 
 @app.route('/api/items', methods=['GET'])
 def get_items():
